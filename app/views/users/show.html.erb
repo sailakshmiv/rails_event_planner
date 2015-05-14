@@ -1,0 +1,128 @@
+<h1>Welcome, <%= @user.first_name %>!</h1>
+<div class="links"> 
+<a href="/users/<%= @user.id %>/edit">Edit my profile</a> | 
+<a href="/signout">Logout</a>
+</div>
+<br />
+<h3 class="formHead">Here are the events in your state:</h3>
+<table class="middle">
+	<thead>
+		<th>Name</th>
+		<th>Date</th>
+		<th>Location</th>
+		<th>Host</th>
+		<th>Action/Status</th>
+	</thead>
+	<tbody>
+		<% @events.each do |event| %>
+			<% if event.state == @user.state %> <!-- If the event is in the users state -->
+		<tr>
+			<td><a href="/events/<%= event.id %>"><%= event.name %></a></td>
+			<td><%= event.date.to_formatted_s(:long_ordinal) %></td>
+			<td><%= event.city %></td> 
+			<td><%= event.user.first_name %></td>
+			<td>
+				<% if event.user.id == @user.id %> <!-- If the user made the event -->
+					<a href="/events/<%= event.id %>/edit">Edit</a> | <a href="/events/<%= event.id %>/destroy">Delete</a>
+				<% end %>										
+				<% if event.user.id != @user.id %> <!-- The user DID NOT make the event -->
+					<%= form_for( :attendee, :url => attendees_path ) do |f| %>
+						<%= f.hidden_field :user_id, :value => @user.id %>
+						<%= f.hidden_field :event_id, :value => event.id %>
+						<%= f.submit "Join Event" %>
+					<% end %>
+				<% end %>
+				<% @attendees.each do |attendee| %>
+				<% if event.user.id != @user.id && @user.id == attendee.user.id && event.id == attendee.event.id %>
+					<p class="joined">Joined</p>
+					<a href="/attendees/<%= attendee.id %>/destroy">Cancel</a>
+				<% end %>
+				<% end %>
+			</td>
+		</tr>
+		<% end %>
+		<% end %>
+	</tbody>
+</table>
+
+<h3 class="formHead">Here are the events in other states:</h3>
+<table class="middle">
+	<thead>
+		<th>Name</th>
+		<th>Date</th>
+		<th>Location</th>
+		<th>State</th>
+		<th>Host</th>
+		<th>Action</th>
+	</thead>
+	<tbody>
+		<% @events.each do |event| %>
+			<% if event.state != @user.state %> <!-- If the event is NOT in the users state -->
+			<tr>
+				<td><a href="/events/<%= event.id %>"><%= event.name %></a></td>
+				<td><%= event.date.to_formatted_s(:long_ordinal) %></td>
+				<td><%= event.city %></td>
+				<td><%= event.state %></td>
+				<td><%= event.user.first_name %></td>
+				<td>
+					<% if event.user.id == @user.id %> <!-- If the user made the event -->
+						<a href="/events/<%= event.id %>/edit">Edit</a> | <a href="/events/<%= event.id %>/destroy">Delete</a>
+					<% end %>
+
+					<% if event.user.id != @user.id %> <!-- If the user didnt make the event -->
+						<%= form_for( :attendee, :url => attendees_path ) do |f| %>
+							<%= f.hidden_field :user_id, :value => @user.id %>
+							<%= f.hidden_field :event_id, :value => event.id %>
+							<%= f.submit "Join Event" %>
+						<% end %>
+					<% end %>
+					<% @attendees.each do |attendee| %>
+					<% if event.user.id != @user.id && @user.id == attendee.user.id && event.id == attendee.event.id %>
+						<p class="joined">Joined</p>
+						<a href="/attendees/<%= attendee.id %>/destroy">Cancel</a>
+					<% end %>
+					<% end %>
+				</td> 
+			</tr>
+			<% end %>
+		<% end %>
+	</tbody>
+</table>
+<br />
+<div class="eventForm"> <!-- CREATE AN EVENT -->
+<h3>Add Event</h3>
+<% if flash[:errors] %>
+	<% flash[:errors].each do |error| %>
+		<p class="red"><%= error %></p>
+	<% end %>
+<% end %>
+<% if flash[:success] %>
+	<p class="green"><%= flash[:success] %></p>
+<% end %>
+<%= form_for( :event, :url => events_path ) do |f| %>
+  <div class="field">
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </div>
+  <br />
+  <div class="field">
+    <%= f.label :date %><br />
+    <%= f.date_select :date %>
+  </div>
+  <br />
+  <div class="field">
+	<%= f.label :city %><br />
+	<%= f.text_field :city %>
+  </div>
+  <br />
+  <div class="field">
+	<%= f.label :state %><br />
+	<%= f.select(:state, options_for_select(us_states, "WA")) %>
+  </div>
+  <%= f.hidden_field :user_id, :value => @user.id %>
+  <br />
+  <div class="actions">
+    <%= f.submit "Add Event" %>
+  </div>
+<% end %>
+</div>

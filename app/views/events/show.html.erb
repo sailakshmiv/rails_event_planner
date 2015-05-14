@@ -1,0 +1,57 @@
+<h1><%= @event.name %></h1>
+<div class="links">
+<a href="/users/<%= @user.id %>">Events Dashboard</a> | 
+<a href="/signout">Logout</a>
+</div>
+<div class="discussion">
+	<h3>Discussion about this event:</h3>
+	<div class="feed">
+		<% @comments.each do |comment| if @event.id == comment.event.id %>
+			<p class="center"><%= comment.user.first_name %> says: <%= comment.comment %></p>
+			<p class="center">____________________________</p>
+		<% end %>
+		<% end %>
+	</div>
+	<% if flash[:errors] %>
+		<% flash[:errors].each do |error| %>
+			<p class="red"><%= error %></p>
+		<% end %>
+	<% end %>
+	<% if flash[:success] %>
+		<p class="green"><%= flash[:success] %></p>
+	<% end %>
+	<h4>Add Comment:</h4>
+	<%= form_for( :comment, :url => comments_create_path) do |f| %>
+		<%= f.text_area :comment %>
+		<%= f.hidden_field :user_id, :value => @user.id %>
+		<%= f.hidden_field :event_id, :value => @event.id %><br />
+		<%= f.submit "Post Comment" %>
+	<% end %>
+</div>
+<br />
+<ul class="event">
+	<li><h3>Host: <%= @event.user.first_name %> <%= @event.user.last_name %></h3></li>
+	<li><h3>Date: <%= @event.date.to_formatted_s(:long_ordinal) %></h3></li>
+	<li><h3>Location: <%= @event.city %> <%= @event.state %></h3></li>
+
+	<li><h3>People joining the event: <%= @counter %></h3></li>
+
+</ul>
+<br />
+<table>
+	<thead>
+		<th>Name</th>
+		<th>City</th>
+		<th>State</th>
+	</thead> 
+	<tbody>
+		<% @attendees.each do |attendee| if @event.id == attendee.event.id %>
+		<tr>
+			<td><%= attendee.user.first_name %> <%= attendee.user.last_name %></td>
+			<td><%= attendee.user.city %></td>
+			<td><%= attendee.user.state %></td>
+		</tr>
+		<% end %>
+		<% end %>
+	</tbody>
+</table>

@@ -1,0 +1,78 @@
+<h1 class="center">Welcome to Event meetup!</h1>
+
+<div class="reg">
+<h2>Register</h2>
+<% if flash[:errors] %>
+	<% flash[:errors].each do |error| %>
+		<p class="red"><%= error %></p>
+	<% end %>
+<% end %>
+<% if flash[:success] %>
+	<p><%= flash[:success] %></p>
+<% end %>
+<%= form_for @user do |f| %>
+
+<div class="field">
+	<%= f.label :first_name %><br />
+	<%= f.text_field :first_name %>
+</div>
+<br />
+<div class="field">
+	<%= f.label :last_name %><br />
+	<%= f.text_field :last_name %>
+</div>
+<br />
+<div class="field">
+	<%= f.label :email %><br />
+	<%= f.text_field :email %>
+</div>
+<br />
+<div class="field">
+	<%= f.label :city %><br />
+	<%= f.text_field :city %>
+</div>
+<br />
+<div class="field">
+	<%= f.label :state %><br />
+	<%= f.select(:state, options_for_select(us_states, "WA")) %>
+</div>
+<br />
+<p>*Password should be at least 8 characters</p>
+<div class="field">
+	<%= f.label :password %><br />
+	<%= f.password_field :password %>
+</div>
+<br />
+<div class="field">
+	<%= f.label "Confirm Password" %><br />
+	<%= f.password_field :password_confirmation %>
+</div>
+<br />
+<div class="actions">
+    <%= f.submit "Register" %>
+ </div>
+
+<% end %>
+</div>
+<!-- End of Registration -->
+<!--#######################################################################-->
+<div class="log">
+<h2>Log In</h2>
+<%= flash[:error] %>
+<%= form_for( :session, :url => sessions_path ) do |f| %>
+  <div class="field">
+    <%= f.label :email %><br />
+    <%= f.email_field :email %>
+  </div>
+  <br />
+  <div class="field">
+    <%= f.label :password %><br />
+    <%= f.password_field :password, autocomplete: "off" %>
+  </div>
+  <br />
+  <div class="actions">
+    <%= f.submit "Log in" %>
+  </div>
+<% end %>
+
+</div>

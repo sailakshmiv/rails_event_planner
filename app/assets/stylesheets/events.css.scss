@@ -1,0 +1,25 @@
+// Place all the styles related to the Events controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+ul.event {
+	list-style-type: none;
+}
+div.feed {
+	width: 300px;
+	min-height: 100px;
+	max-height: 150px;
+	border: 3px solid black;
+	overflow: scroll;
+}
+div.discussion {
+	float: right;
+}
+.red {
+	color: red;
+}
+.green {
+	color: green;
+}
+p.center {
+	text-align: center;
+}
